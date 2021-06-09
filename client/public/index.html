@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.png"> 
+    <title>CrioOn</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+</head>
+<body>
+<noscript>
+    <strong>Siamo spiacenti ma questa applicazione non funziona correttamente senza JavaScript abilitato. Si prega di abilitarlo per continuare.</strong>
+</noscript>
+<div id="app"></div>
+
+<!-- built files will be auto injected -->
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<!--<script src="https://www.paypal.com/sdk/js?client-id=AQ4cbpmlGDKNz3iDpDvFAoiGFhfS73UZJiHBjRBRZ1FLQblD1fBv6R4HYjjjXdrVj-ka39NUXkTUQAvV&currency=USD"></script>-->
+
+<!--<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>-->
+<script>
+    ////////////// load script programatically /////////////////////////////
+    function loaderScript (scriptUrl) {
+        return new Promise(function (res, rej) {
+            let script = document.createElement('script')
+            script.src = scriptUrl
+            script.type = 'text/javascript'
+            script.onError = rej
+            script.async = true
+            script.onload = res
+            script.addEventListener('error', rej)
+            script.addEventListener('load', res)
+            document.head.appendChild(script)
+        })
+    }
+
+    loaderScript('https://cdn.onesignal.com/sdks/OneSignalSDK.js').then((res) => {
+        console.log('loaded')
+        window.OneSignal = window.OneSignal || []
+        // Production
+        OneSignal.push(function () {
+            OneSignal.init({
+                appId: '684a34cc-66d7-4b3a-b71b-22ce9d6de7b9',
+                notifyButton: {
+                    enable: true,
+                },
+            }).catch(e => {
+                new window.Notification('Ups!', {
+                    body: 'Le notifiche sono bloccate!',
+                    icon: '/icons/android-chrome-192x192.png',
+                })
+            })
+        })
+
+        OneSignal.push(() => {
+            this.showNotfications = OneSignal.isPushNotificationsSupported()
+            if (this.showNotfications) {
+                // console.log('isPushNotificationsSupported', this.showNotfications)
+                // this.$context.addClass('show-notifications',this.showNotfications)
+            } else {
+                new window.Notification('Ups!', {
+                    body: 'Le notifiche non sono supportate!',
+                    icon: '/icons/android-chrome-192x192.png',
+                })
+            }
+            // Check if subscribed on load
+            OneSignal.isPushNotificationsEnabled().then((isSubscribed) => {
+                // console.log('isPushNotificationsEnabled', isSubscribed)
+            })
+        })
+    }).catch(e => {
+        new window.Notification('Ups!', {
+            body: 'Le notifiche sono bloccate!',
+            icon: '/icons/android-chrome-192x192.png',
+        })
+        console.log('error')
+    })
+</script>
+</body>
+</html>
